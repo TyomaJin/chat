@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NgApp</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <!-- <app-root></app-root> -->
+
+  <h1>Hello World!</h1>
+  <div id="future"></div>
+  <form id="form" id="chat_form">
+    <input id="chat_input" type="text">
+    <input type="submit" value="Send">
+  </form>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('connect', (data) => {
+      console.log('Client connected!');
+      socket.emit('join', 'Hello World from client');
+    })
+
+    socket.on('broad', function(data) {
+      $('#future').append(data+ "<br/>");
+    });
+
+    $('form').submit(function(e){
+      e.preventDefault();
+      var message = $('#chat_input').val();
+      socket.emit('messages', message);
+    });
+
+  </script>
+<script type="text/javascript" src="runtime.js"></script><script type="text/javascript" src="polyfills.js"></script><script type="text/javascript" src="styles.js"></script><script type="text/javascript" src="vendor.js"></script><script type="text/javascript" src="main.js"></script></body>
+</html>
