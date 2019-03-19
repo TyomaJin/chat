@@ -9,34 +9,72 @@
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <!-- <app-root></app-root> -->
+  <app-root></app-root>
 
-  <h1>Hello World!</h1>
+  <!-- <h1>Hello World!</h1>
   <div id="future"></div>
   <form id="form" id="chat_form">
     <input id="chat_input" type="text">
     <input type="submit" value="Send">
-  </form>
+  </form> -->
+
+  <div class="container">
+    <br>
+    <div class="jumbotron">
+      <h1 class="display-4">Send Message</h1>
+      <br>
+      <input id="name" class="form-control" placeholder="Name">
+      <br>
+      <textarea id="message" class="form-control" placeholder="Your Message Here"></textarea>
+      <br>
+      <button id="send" class="btn btn-success">Send</button>
+    </div>
+    <div id="messages"></div>
+  </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="socket.io/socket.io.js"></script>
   <script>
-    const socket = io();
+    // const socket = io();
 
-    socket.on('connect', (data) => {
-      console.log('Client connected!');
-      socket.emit('join', 'Hello World from client');
+    // socket.on('connect', (data) => {
+    //   console.log('Client connected!');
+    //   socket.emit('join', 'Hello World from client');
+    // })
+
+    // socket.on('broad', function(data) {
+    //   $('#future').append(data+ "<br/>");
+    // });
+
+    // $('form').submit(function(e){
+    //   e.preventDefault();
+    //   var message = $('#chat_input').val();
+    //   socket.emit('messages', message);
+    // });
+    var socket = io();
+    socket.on('message', addMessages)
+
+    $(() => {
+    $("#send").click(()=>{
+       sendMessage({
+          name: $("#name").val(), 
+          message:$("#message").val()});
+        })
+      getMessages()
     })
-
-    socket.on('broad', function(data) {
-      $('#future').append(data+ "<br/>");
-    });
-
-    $('form').submit(function(e){
-      e.preventDefault();
-      var message = $('#chat_input').val();
-      socket.emit('messages', message);
-    });
+    function addMessages(message){
+      $('#messages').append(`
+          <h4> ${message.name} </h4>
+          <p>  ${message.message} </p>`)
+      }
+    function getMessages(){
+      $.get('http://localhost:3000/messages', (data) => {
+      data.forEach(addMessages);
+      })
+    }
+    function sendMessage(message){
+      $.post('http://localhost:3000/messages', message)
+    }
 
   </script>
 </body>
